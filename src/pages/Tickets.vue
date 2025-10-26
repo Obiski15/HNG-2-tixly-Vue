@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { ArrowLeft, Edit2, Plus, Trash2, AlertCircle } from "lucide-vue-next";
-import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
 import Layout from "@/components/Layout.vue";
 import CreateTicket from "@/components/ticket/create-ticket.vue";
-import EditTicket from "@/components/ticket/edit-ticket.vue";
 import DeleteTicket from "@/components/ticket/delete-ticket.vue";
+import EditTicket from "@/components/ticket/edit-ticket.vue";
 import Badge from "@/components/ui/badge.vue";
 import Button from "@/components/ui/button.vue";
 import Card from "@/components/ui/Card.vue";
 import { useTicket } from "@/composables/useTicket";
-import type { Ticket } from "@/types/index";
+import { AlertCircle, ArrowLeft, Edit2, Plus, Trash2 } from "lucide-vue-next";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 
 const createTicketRef = ref<InstanceType<typeof CreateTicket> | null>(null);
 const deleteTicketRefs = ref<{

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Toaster as Sonner } from "vue-sonner";
-import type { Component } from "vue";
 
 // Define props that match the Sonner component
 interface ToasterProps {

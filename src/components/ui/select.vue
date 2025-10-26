@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { cn } from "@/utils";
+import { Check, ChevronDown, ChevronUp } from "lucide-vue-next";
 import {
   SelectContent,
   SelectGroup,
@@ -28,9 +30,7 @@ import {
   type SelectValueProps,
   type SelectViewportProps,
 } from "reka-ui";
-import { Check, ChevronDown, ChevronUp } from "lucide-vue-next";
 import { computed } from "vue";
-import { cn } from "@/utils";
 
 const delegatedProps = defineProps<{
   /**
@@ -57,7 +57,10 @@ const delegatedProps = defineProps<{
 
 const delegatedEmits = defineEmits<{
   "update:open": [value: boolean];
-  "update:modelValue": [value: string];
+  // `reka-ui` emits modelValue with a few possible shapes (string | number | bigint | object | null)
+  "update:modelValue": [
+    value: string | number | bigint | Record<string, any> | null
+  ];
 }>();
 
 const props = computed(() => {
@@ -199,7 +202,7 @@ const props = computed(() => {
   <!-- Item -->
   <SelectItem
     v-else-if="as === 'Item'"
-    v-bind="(props as SelectItemProps)"
+    v-bind="(props as unknown as SelectItemProps<any>)"
     :class="
       cn(
         'focus:bg-accent focus:text-accent-foreground relative flex w-full cursor-default items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none select-none data-disabled:pointer-events-none data-disabled:opacity-50',

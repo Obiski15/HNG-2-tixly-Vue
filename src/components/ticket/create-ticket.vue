@@ -4,7 +4,7 @@ import { toTypedSchema } from "@vee-validate/zod";
 import { ref } from "vue";
 import { ticketSchema, type TicketInput } from "@/schema/ticket.schema";
 import { useTicket } from "@/composables/useTicket";
-import Button from "@/components/ui/Button.vue";
+import Button from "@/components/ui/button.vue";
 import Dialog from "@/components/ui/dialog.vue";
 import Input from "@/components/ui/input.vue";
 import Label from "@/components/ui/label.vue";

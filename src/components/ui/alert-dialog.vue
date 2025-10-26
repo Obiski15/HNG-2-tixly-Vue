@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { cn } from "@/utils";
+import { buttonVariants } from "@/utils/constants";
 import {
   AlertDialogAction,
   AlertDialogCancel,
@@ -9,19 +11,8 @@ import {
   AlertDialogRoot,
   AlertDialogTitle,
   AlertDialogTrigger,
-  type AlertDialogActionProps,
-  type AlertDialogCancelProps,
-  type AlertDialogContentProps,
-  type AlertDialogDescriptionProps,
-  type AlertDialogOverlayProps,
-  type AlertDialogPortalProps,
-  type AlertDialogRootProps,
-  type AlertDialogTitleProps,
-  type AlertDialogTriggerProps,
 } from "reka-ui";
-import { computed, type HTMLAttributes } from "vue";
-import { cn } from "@/utils";
-import { buttonVariants } from "@/utils/constants";
+import { computed } from "vue";
 
 const delegatedProps = defineProps<{
   /**
@@ -58,32 +49,26 @@ const props = computed(() => {
   <!-- Root -->
   <AlertDialogRoot
     v-if="as === 'Root'"
-    v-bind="(props as AlertDialogRootProps)"
+    v-bind="(props as any)"
     @update:open="delegatedEmits('update:open', $event)"
   >
     <slot />
   </AlertDialogRoot>
 
   <!-- Trigger -->
-  <AlertDialogTrigger
-    v-else-if="as === 'Trigger'"
-    v-bind="(props as AlertDialogTriggerProps)"
-  >
+  <AlertDialogTrigger v-else-if="as === 'Trigger'" v-bind="(props as any)">
     <slot />
   </AlertDialogTrigger>
 
   <!-- Portal -->
-  <AlertDialogPortal
-    v-else-if="as === 'Portal'"
-    v-bind="(props as AlertDialogPortalProps)"
-  >
+  <AlertDialogPortal v-else-if="as === 'Portal'" v-bind="(props as any)">
     <slot />
   </AlertDialogPortal>
 
   <!-- Overlay -->
   <AlertDialogOverlay
     v-else-if="as === 'Overlay'"
-    v-bind="(props as AlertDialogOverlayProps)"
+    v-bind="(props as any)"
     :class="
       cn(
         'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80',
@@ -101,8 +86,9 @@ const props = computed(() => {
         )
       "
     />
+
     <AlertDialogContent
-      v-bind="(props as AlertDialogContentProps)"
+      v-bind="(props as any)"
       :class="
         cn(
           'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed top-[50%] left-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg duration-200 sm:rounded-lg',
@@ -117,6 +103,7 @@ const props = computed(() => {
   <!-- Header -->
   <div
     v-else-if="as === 'Header'"
+    v-bind="(props as any)"
     :class="
       cn(
         'flex flex-col space-y-2 text-center sm:text-left',
@@ -143,7 +130,7 @@ const props = computed(() => {
   <!-- Title -->
   <AlertDialogTitle
     v-else-if="as === 'Title'"
-    v-bind="(props as AlertDialogTitleProps)"
+    v-bind="(props as any)"
     :class="cn('text-lg font-semibold', delegatedProps.class)"
   >
     <slot />
@@ -152,7 +139,7 @@ const props = computed(() => {
   <!-- Description -->
   <AlertDialogDescription
     v-else-if="as === 'Description'"
-    v-bind="(props as AlertDialogDescriptionProps)"
+    v-bind="(props as any)"
     :class="cn('text-muted-foreground text-sm', delegatedProps.class)"
   >
     <slot />
@@ -161,7 +148,7 @@ const props = computed(() => {
   <!-- Action -->
   <AlertDialogAction
     v-else-if="as === 'Action'"
-    v-bind="(props as AlertDialogActionProps)"
+    v-bind="(props as any)"
     :class="cn(buttonVariants(), delegatedProps.class)"
   >
     <slot />
@@ -170,7 +157,7 @@ const props = computed(() => {
   <!-- Cancel -->
   <AlertDialogCancel
     v-else-if="as === 'Cancel'"
-    v-bind="(props as AlertDialogCancelProps)"
+    v-bind="(props as any)"
     :class="
       cn(
         buttonVariants({ variant: 'outline' }),
