@@ -70,17 +70,44 @@ export function createTicket(): ITicket {
     };
   });
 
-  const refetch = async () => {
-    const result = await getTicketsService();
-    tickets.value = result;
+  // Refetch with retries (exponential backoff)
+  const refetch = async (retries = 3, baseDelayMs = 500) => {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        const result = await getTicketsService();
+        tickets.value = result;
+        return result;
+      } catch (err) {
+        if (attempt === retries) throw err;
+        // wait before next attempt
+        const delay = baseDelayMs * Math.pow(2, attempt - 1);
+        await new Promise((r) => setTimeout(r, delay));
+      }
+    }
   };
 
   const createTicket = async (data: TicketInput) => {
     try {
       status.value = "isCreating";
-      await createTicketService(data);
-      await refetch();
+      const created = await createTicketService(data);
+
+      // optimistic update locally if we have tickets loaded
+      if (tickets.value) {
+        tickets.value = [created as Ticket, ...tickets.value];
+      }
+
       toast.success("Ticket created");
+
+      // refetch in background after a short delay to allow the server to finish
+      // restarting (nodemon/json-server) and avoid hitting the restart window
+      setTimeout(() => {
+        void refetch().catch((e) => {
+          console.warn("refetch after create failed:", e);
+          toast.info(
+            "Ticket created but fetching latest list failed. Refresh to see updates."
+          );
+        });
+      }, 1500);
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -92,8 +119,23 @@ export function createTicket(): ITicket {
     try {
       status.value = "isDeleting";
       await deleteTicketService(id);
-      await refetch();
+
+      // optimistic remove
+      if (tickets.value) {
+        tickets.value = tickets.value.filter((t) => t.id !== id);
+      }
+
       toast.success("Ticket Deleted");
+
+      // background refetch after short delay to avoid server restart window
+      setTimeout(() => {
+        void refetch().catch((e) => {
+          console.warn("refetch after delete failed:", e);
+          toast.info(
+            "Ticket deleted but fetching latest list failed. Refresh to see updates."
+          );
+        });
+      }, 1500);
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -104,9 +146,26 @@ export function createTicket(): ITicket {
   const editTicket = async (data: Partial<Ticket>) => {
     try {
       status.value = "isEditing";
-      await editTicketService(data);
-      await refetch();
+      const updated = await editTicketService(data);
+
+      // optimistic update
+      if (tickets.value) {
+        tickets.value = tickets.value.map((t) =>
+          t.id === updated.id ? (updated as Ticket) : t
+        );
+      }
+
       toast.success("Ticket updated");
+
+      // background refetch after short delay to avoid server restart window
+      setTimeout(() => {
+        void refetch().catch((e) => {
+          console.warn("refetch after edit failed:", e);
+          toast.info(
+            "Ticket updated but fetching latest list failed. Refresh to see updates."
+          );
+        });
+      }, 1500);
     } catch (e) {
       toast.error((e as Error).message);
     } finally {

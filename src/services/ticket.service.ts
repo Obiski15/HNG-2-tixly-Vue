@@ -9,10 +9,16 @@ export const getTickets = async () => {
     credentials: "include",
   });
 
+  if (!res.ok) {
+    try {
+      const errorData = await res.json();
+      return handleAPIError(errorData);
+    } catch {
+      throw new Error(`Server error: ${res.status} ${res.statusText}`);
+    }
+  }
+
   const result = await res.json();
-
-  if (!res.ok) return handleAPIError(result);
-
   return result as Ticket[];
 };
 
@@ -33,11 +39,16 @@ export const createTicket = async (data: TicketInput) => {
     body: JSON.stringify(modifiedData),
     credentials: "include",
   });
+  if (!res.ok) {
+    try {
+      const errorData = await res.json();
+      return handleAPIError(errorData);
+    } catch {
+      throw new Error(`Server error: ${res.status} ${res.statusText}`);
+    }
+  }
 
   const result = await res.json();
-
-  if (!res.ok) return handleAPIError(result);
-
   return result;
 };
 
@@ -52,11 +63,16 @@ export const editTicket = async (data: Partial<Ticket>) => {
     body: JSON.stringify(updatedData),
     credentials: "include",
   });
+  if (!res.ok) {
+    try {
+      const errorData = await res.json();
+      return handleAPIError(errorData);
+    } catch {
+      throw new Error(`Server error: ${res.status} ${res.statusText}`);
+    }
+  }
 
   const result = await res.json();
-
-  if (!res.ok) return handleAPIError(result);
-
   return result;
 };
 
@@ -65,10 +81,15 @@ export const deleteTicket = async (id: string) => {
     method: "DELETE",
     credentials: "include",
   });
+  if (!res.ok) {
+    try {
+      const errorData = await res.json();
+      return handleAPIError(errorData);
+    } catch {
+      throw new Error(`Server error: ${res.status} ${res.statusText}`);
+    }
+  }
 
   const result = await res.json();
-
-  if (!res.ok) return handleAPIError(result);
-
   return result;
 };
